@@ -6,11 +6,24 @@ from .serializers import SuperSerializer
 from . models import Supers
 
 @api_view(['GET', 'POST'])
-def super_types_list(request):
+def supers_list(request):
 
     if request.method == 'GET':
-        super_types = Supers.objects.all()
-        serializer = SuperSerializer(super_types, many=True)
+
+        
+        super_type = request.query_params.get('model')
+        # print(super_type)
+
+        queryset= Supers.objects.all()
+
+        if super_type:
+            queryset = queryset.filter(super_type__model=super_type)
+
+        super_param = request.query_params.get('model')
+        print(super_param)
+        
+            
+        serializer = SuperSerializer(queryset, many=True)
         return Response(serializer.data)
     elif request.method == 'POST':
         serializer = SuperSerializer(data=request.data)
@@ -19,9 +32,13 @@ def super_types_list(request):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 @api_view(['GET','PUT','DELETE'])
-def Super_Type_detail(request, pk):
-        super_types = get_object_or_404(super_types, pk=pk)
+def Supers_detail(request, pk):
+        
+        super_types = get_object_or_404(Supers, pk=pk)
         if request.method == 'GET':
+
+            
+
             serializer = SuperSerializer(Supers);
             return Response(serializer.data)
         elif request.method == 'PUT':

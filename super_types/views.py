@@ -9,8 +9,17 @@ from . models import SuperType
 def super_types_list(request):
 
     if request.method == 'GET':
-        super_types = SuperType.objects.all()
-        serializer = SuperTypeSerializer(super_types, many=True)
+
+        super_type_name = request.query_params.get('super_type')
+        print(super_type_name)
+
+        queryset = SuperType.objects.all()
+
+        if super_type_name:
+            queryset = queryset.filter(super_type__name=super_type_name)
+
+        
+        serializer = SuperTypeSerializer(queryset, many=True)
         return Response(serializer.data)
     elif request.method == 'POST':
         serializer = SuperTypeSerializer(data=request.data)
