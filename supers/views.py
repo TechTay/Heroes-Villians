@@ -39,7 +39,7 @@ def Supers_detail(request, pk):
 
             
 
-            serializer = SuperSerializer(Supers);
+            serializer = SuperSerializer(super_types);
             return Response(serializer.data)
         elif request.method == 'PUT':
             serializer = SuperSerializer(Supers, data=request.data)
