@@ -10,17 +10,23 @@ def super_types_list(request):
 
     if request.method == 'GET':
 
+        
         super_type_name = request.query_params.get('super_type')
-        print(super_type_name)
-
         queryset = SuperType.objects.all()
+        custom_response_dictionary = {'Heroes' = [id=1], 'Villian' = [id=2]}
 
-        if super_type_name:
-            queryset = queryset.filter(super_type__name=super_type_name)
+        for supertype in super_type_name:
+            Heroes = SuperType.objects.filter(type=type)
+            super_type_serializer = SuperTypeSerializer(Heroes, many=True)
+
+            custom_response_dictionary[SuperType.type] = {
+                'Heroes': SuperType.Heroes,
+                'Villians': super_type_serializer.data
+            }
+
+        return Response(custom_response_dictionary)
 
         
-        serializer = SuperTypeSerializer(queryset, many=True)
-        return Response(serializer.data)
     elif request.method == 'POST':
         serializer = SuperTypeSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)

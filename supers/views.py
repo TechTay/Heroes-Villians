@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from .serializers import SuperSerializer
 from . models import Supers
+from . models import SuperType
 
 @api_view(['GET', 'POST'])
 def supers_list(request):
@@ -11,20 +12,21 @@ def supers_list(request):
     if request.method == 'GET':
 
         
-        super_type = request.query_params.get('model')
-        # print(super_type)
+        super_type = request.query_params.get('type')
+        sort_param = request.query_params.get('sort')
+
 
         queryset= Supers.objects.all()
 
         if super_type:
-            queryset = queryset.filter(super_type__model=super_type)
+            queryset = queryset.filter(super_type__type=super_type)
 
-        super_param = request.query_params.get('model')
-        print(super_param)
-        
+        if sort_param:
+            queryset = queryset.order_by(sort_param)
             
         serializer = SuperSerializer(queryset, many=True)
         return Response(serializer.data)
+
     elif request.method == 'POST':
         serializer = SuperSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -42,10 +44,10 @@ def Supers_detail(request, pk):
             serializer = SuperSerializer(super_types);
             return Response(serializer.data)
         elif request.method == 'PUT':
-            serializer = SuperSerializer(Supers, data=request.data)
+            serializer = SuperSerializer(data=request.data)
             serializer.is_valid(raise_exception=True)
             serializer.save()
             return Response(serializer.data)
         elif request.method == 'DELETE':
-            Supers.delete()
+            Supers.objects.filter(id=7).delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
